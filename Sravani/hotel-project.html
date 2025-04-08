@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HOTEL PARADISE</title>
+  <style>
+    /* Enhanced tick icon for selection */
+    .menu-item {
+      position: relative;
+      display: flex;
+      align-items: center;
+      padding: 15px 15px 15px 50px; /* extra left padding for tick space */
+      border-bottom: 1px solid #ddd;
+      transition: background-color 0.3s;
+      cursor: pointer;
+    }
+    .menu-item:hover {
+      background-color: #f9f9f9;
+    }
+    .menu-item.selected::before {
+      content: "\2714"; /* Unicode check mark */
+      position: absolute;
+      left: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background-color: #4CAF50;
+      color: white;
+      font-size: 18px;
+      line-height: 24px;
+      text-align: center;
+    }
+    .menu-item img {
+      width: 70px;
+      height: 70px;
+      margin-right: 20px;
+      border-radius: 10px;
+      object-fit: cover;
+    }
+    .menu-item-description {
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+    }
+    .menu-item-description span:first-child {
+      font-size: 1.2em;
+      font-weight: bold;
+    }
+    .menu-item-description span:last-child {
+      font-size: 1.2em;
+      color: #4CAF50;
+    }
+    /* Billing styles */
+    .billing-list {
+      margin-top: 20px;
+      padding: 20px;
+      background-color: #fff;
+      border-radius: 10px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    }
+    .billing-list h3 {
+      margin-bottom: 10px;
+      font-size: 1.5em;
+      color: #333;
+    }
+    .billing-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid #ddd;
+    }
+    .billing-item:last-child {
+      border-bottom: none;
+    }
+    .billing-item span {
+      font-size: 1.2em;
+    }
+    .total-amount {
+      font-size: 1.5em;
+      font-weight: bold;
+      color: #4CAF50;
+      text-align: right;
+      margin-top: 20px;
+    }
+    .place-order-btn {
+      width: 100%;
+      padding: 12px;
+      margin-top: 15px;
+      border-radius: 8px;
+      border: none;
+      background-color: #4CAF50;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    .place-order-btn:hover {
+      background-color: #45a049;
+    }
+    .place-order-btn:active {
+      background-color: #388e3c;
+    }
+    /* Back-to-Top button styles */
+    #backToTop {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      padding: 10px 15px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      display: none;
+      font-size: 24px; /* increased font-size for arrow visibility */
+      z-index: 1000;
+    }
+    #backToTop:hover {
+      background-color: #45a049;
+    }
+    /* General Body and Layout */
+    body {
+      font-family: 'Arial', sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f9;
+      color: #333;
+    }
+    header {
+      background-color: #333;
+      color: white;
+      padding: 30px 0;
+      text-align: center;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+    header nav ul {
+      list-style: none;
+      padding: 0;
+    }
+    header nav ul li {
+      display: inline;
+      margin: 0 20px;
+    }
+    header nav ul li a {
+      color: white;
+      text-decoration: none;
+      font-size: 18px;
+      text-transform: uppercase;
+      transition: color 0.3s;
+    }
+    header nav ul li a:hover {
+      color: #4CAF50;
+    }
+    section {
+      padding: 40px;
+      margin: 20px;
+      background-color: white;
+      border-radius: 10px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    }
+    h1 {
+      margin-bottom: 10px;
+    }
+    h2 {
+      color: #333;
+      font-size: 2em;
+      margin-bottom: 20px;
+      text-align: center;
+      text-transform: uppercase;
+    }
+    .category-title {
+      font-size: 1.5em;
+      color: #555;
+      margin-top: 30px;
+      margin-bottom: 15px;
+      text-align: left;
+      font-weight: bold;
+    }
+    /* Unused ordering controls removed */
+    select, .order-btn {
+      display: none;
+    }
+    #order-message {
+      text-align: center;
+      font-size: 1.2em;
+      color: green;
+      margin-top: 20px;
+    }
+    footer {
+      text-align: center;
+      padding: 20px;
+      background-color: #333;
+      color: white;
+      font-size: 14px;
+    }
+    footer a {
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+      transition: color 0.3s;
+    }
+    footer a:hover {
+      color: #4CAF50;
+    }
+    @media (max-width: 768px) {
+      .menu-item img {
+        width: 50px;
+        height: 50px;
+      }
+      .menu-item-description span {
+        font-size: 1em;
+      }
+      section {
+        padding: 20px;
+      }
+      header nav ul li {
+        margin: 0 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>HOTEL PARADISE</h1>
+    <nav>
+      <ul>
+        <li><a href="#breakfast">Breakfast</a></li>
+        <li><a href="#Staters">Staters</a></li>
+        <li><a href="#lunch">Lunch</a></li>
+        <li><a href="#desserts">Desserts</a></li>
+        <li><a href="#drinks">Drinks</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- Tiffins / Breakfast Section -->
+  <section id="breakfast">
+    <h2>Tiffins Menu</h2>
+    <div class="category-title">Veg Items</div>
+    <div class="menu-item" onclick="toggleItem(this, 'Masala Dosa', 60)">
+      <img src="https://vismaifood.com/storage/app/uploads/public/8b4/19e/427/thumb__1200_0_0_0_auto.jpg" alt="Masala Dosa">
+      <div class="menu-item-description">
+        <span>Masala Dosa</span>
+        <span>₹60</span>
+      </div>
+    </div>
+    <div class="menu-item" onclick="toggleItem(this, 'Rava Dosa', 80)">
+      <img src="https://premasculinary.com/wp-content/uploads/2022/06/Easy-Tomato-Rava-Dosa-Crispy-Thakkali-Rava-Dosai-768x1024.jpg" alt="Rava Dosa">
+      <div class="menu-item-description">
+        <span>Rava Dosa</span>
+        <span>₹80</span>
+      </div>
+    </div>
+    <div class="menu-item" onclick="toggleItem(this, 'Mysore Dosa', 100)">
+      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS3CSSIjvfZXgL_MILx2_58hR1e7VtypQPFOA&s" alt="Mysore Dosa">
+      <div class="menu-item-description">
+        <span>Mysore Dosa</span>
+        <span>₹100</span>
+      </div>
+    </div>
+    <div class="menu-item" onclick="toggleItem(this, 'Puri', 50)">
+      <img src="https://www.indianhealthyrecipes.com/wp-content/uploads/2020/12/poori-puri-recipe.jpg" alt="Puri">
+      <div class="menu-item-description">
+        <span>Puri</span>
+        <span>₹50</span>
+      </div>
+    </div>
+    <div class="menu-item" onclick="toggleItem(this, 'Vada', 40)">
+      <img src="https://bonmasala.com/wp-content/uploads/2022/12/medu-vada-recipe.webp" alt="Vada">
+      <div class="menu-item-description">
+        <span>Vada</span>
+        <span>₹40</span>
+      </div>
+    </div>
+    <div class="menu-item" onclick="toggleItem(this, 'Chapathi', 30)">
+      <img src="https://thumbs.dreamstime.com/z/chapathi-flat-bread-curry-common-staple-indian-subcontinent-as-well-amongst-expatriates-throughout-world-195902202.jpg" alt="Chapathi">
+      <div class="menu-item-description">
+        <span>Chapathi</span>
+        <span>₹30</span>
+      </div>
+    </div>
+    <div class="menu-item" onclick="toggleItem(this, 'Porota', 60)">
+      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTibMVRI2q17kDRuXxsx3YUk05c4_0U6Xo_ww&s" alt="Porota">
+      <div class="menu-item-description">
+        <span>Porota</span>
+        <span>₹60</span>
+      </div>
+    </div>
+
+    <div class="category-title">Non-Veg Items</div>
+    <div class="menu-item" onclick="toggleItem(this, 'Dosa with Chicken', 150)">
+      <img src="https://i.pinimg.com/736x/e9/0c/fd/e90cfdcdac6d30517bf081cf1a90f200.jpg" alt="Dosa with Chicken">
+      <div class="menu-item-description">
+        <span>Dosa with Chicken</span>
+        <span>₹150</span>
+      </div>
+    </div>
+    <div class="menu-item" onclick="toggleItem(this, 'Puri with Chicken', 180)">
+      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSk7EkPq1R7Wp5lS51Ieq7W4FbRT_aN_ZZZhA&s" alt="Puri with Chicken">
+      <div class="menu-item-description">
+        <span>Puri with Chicken</span>
+        <span>₹180</span>
+      </div>
+    </div>
+    <div class="menu-item" onclick="toggleItem(this, 'Chapathi with Chicken', 200)">
+      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQzA85wwTNjfb9bu3B6hPTZrTlbq9a7N4rNrA&s" alt="Chapathi with Chicken">
+      <div class="menu-item-description">
+        <span>Chapathi with Chicken</span>
+        <span>₹200</span>
+      </div>
+    </div>
+    <div class="menu-item" onclick="toggleItem(this, 'Porota with Chicken', 250)">
+      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQR-we0TptnEv2RAYUBh6bFzFlBHYwUaodj5w&s" alt="Porota with Chicken">
+      <div class="menu-item-description">
+        <span>Porota with Chicken</span>
+        <span>₹250</span>
+      </div>
+    </div>
+  </section>
+  <!-- Staters Section -->
+  <section id="staters">
+    <h2>staters Menu</h2>
+    <div class="category-title">Veg Items</div>
+    <div class="menu-item" onclick="toggleItem(this, 'Paneer Tikka', 300)">
+      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRJ2WY2YmIJtXrpmDToEHwJIOAcyBefjpFwXg&s" alt="Paneer Tikka">
+      <div class="menu-item-description">
+        <span>Paneer Tikka</span>
+        <span>₹300</span>
+      </div>
+    </div>
+    <div class="menu-item" onclick="toggleItem(this, 'Samosa', 50)">
+      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRN_iS3r7nblUYThrA6uC2bTO31N6n4eaAQjw&s" alt="Samosa">
+      <div class="menu-item-description">
+        <span>Samosa</span>
+        <span>₹50</span>
+      </div>
+    </div>
+    <div class="menu-item" onclick="toggleItem(this, 'Hara Bhara Kabab', 200)">
+      <img src="https://tse1.mm.bing.net/th?id=OIP.8YD6UlppbledYi-VIIkUfgHaFj&pid=Api&P=0&h=180" alt="Hara Bhara Kabab">
+      <div class="menu-item-description">
+        <span>Hara Bhara Kabab</span>
+        <span>₹200</span>
+      </div>
+    </div>
+    <div class="menu-item" onclick="toggleItem(this, 'Aloo Tikki', 250)">
+      <img src="https://images.mrcook.app/recipe-image/01902c02-975a-7a74-aa2f-c4a53106bb6a" alt="Aloo Tikki">
+      <div class="menu-item-description">
+        <span>Aloo Tikki</span>
+        <span>₹150</span>
+      </div>
+    </div>
+    <div class="menu-item" onclick="toggleItem(this, 'Chilli Paneer', 220)">
+      <img src="https://tse3.mm.bing.net/th?id=OIP.9OxO83iFBuxPR6Qigo4BMAHaHa&pid=Api&P=0&h=180" alt="Chilli Paneer">
+      <div class="menu-item-description">
+        <span>Chilli Paneer</span>
+        <span>₹220</span>
+      </div>
+    </div>
+    <div class="category-title">Non-Veg Items</div>
+    <div class="menu-item" onclick="toggleItem(this, 'Chicken Tikka', 250)">
+      <img src="https://theyumyumclub.com/wp-content/uploads/2019/04/CTT-fy-2.png" alt="Chicken Tikka">
+      <div class="menu-item-description">
+        <span>Chicken Tikka</span>
+        <span>₹250</span>
+      </div>
+    </div>
+    <div class="menu-item" onclick="toggleItem(this, 'Chicken Lollipop', 300)">
+      <img src="https://freshprotino.com/wp-content/uploads/2021/03/maxresdefault-1.jpg" alt="Chicken Lollipop">
+      <div class="menu-item-description">
+        <span>Chicken Lollipop</span>
+        <span>₹300</span>
+      </div>
+    </div>
+    <div class="menu-item" onclick="toggleItem(this, 'Mutton Seekh Kebab', 350)">
+      <img src="https://images.news18.com/ibnlive/uploads/2023/07/mutton-seekh-kebab-169030200216x9.jpg" alt="Mutton Seekh Kebab">
+      <div class="menu-item-description">
+        <span>Mutton Seekh Kebab</span>
+        <span>₹350</span>
+      </div>
+    </div>
+    <div class="menu-item" onclick="toggleItem(this, 'Fish Amritsari', 250)">
+      <img src="http://www.archanaskitchen.com/images/archanaskitchen/1-Author/sibyl_sunitha/Amritsar_Fish_Fry_Recipe_.jpg" alt="Fish Amritsari">
+      <div class="menu-item-description">
+        <span>Fish Amritsari</span>
+        <span>₹250</span>
+      </div>
+    </div>
+    <div class="menu-item" onclick="toggleItem(this, 'Prawn Koliwada', 400)">
+      <img src="https://vanitascorner.com/wp-content/uploads/2023/06/Prawns-koliwada-1024x768.jpg" alt="Prawn Koliwada">
+      <div class="menu-item-description">
+        <span>Prawn Koliwada</span>
+        <span>₹400</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Lunch Section -->
+  <section id="lunch">
+    <h2>Lunch Menu</h2>
+    <div class="category-title">Veg Items</div>
+    <div class="menu-item" onclick="toggleItem(this, 'Mughlai Veg Biryani', 250)">
+      <img src="https://cdn.sunbasket.com/01398a8c-a9a6-4a91-9dd3-2abf2df66e4e.jpg" alt="Mughlai Veg Biryani">
+      <div class="menu-item-description">
+        <span>Mughlai Veg Biryani</span>
+        <span>₹250</span>
+      </div>
+    </div>
+    <div class="menu-item" onclick="toggleItem(this, 'Curd Rice', 150)">
+      <img src="https://tse1.mm.bing.net/th?id=OIP.cJzQ-h7MG0O2-osrDcUuLgHaEn&pid=Api&P=0&h=180" alt="Curd Rice">
+      <div class="menu-item-description">
+        <span>Curd Rice</span>
+        <span>₹150</span>
+      </div>
+    </div>
+    <div class="menu-item" onclick="toggleItem(this, 'Mushroom Biryani', 200)">
+      <img src="https://images.mrcook.app/recipe-image/0192d1ab-ffd1-7187-a00f-ccd773f0a809" alt="Mushroom Biryani">
+      <div class="menu-item-description">
+        <span>Mushroom Biryani</span>
+        <span>₹200</span>
+      </div>
+    </div>
+    <div class="menu-item" onclick="toggleItem(this, 'Paneer Biryani', 250)">
+      <img src="https://revi.b-cdn.net/wp-content/uploads/2017/01/paneer-biryani-1.jpg" alt="Paneer Biryani">
+      <div class="menu-item-description">
+        <span>Paneer Biryani</span>
+        <span>₹250</span>
+      </div>
+    </div>
+    <div class="menu-item" onclick="toggleItem(this, 'Veg Biryani', 220)">
+      <img src="https://i.ytimg.com/vi/Do7ZdUodDdw/maxresdefault.jpg" alt="Veg Biryani">
+      <div class="menu-item-description">
+        <span>Veg Biryani</span>
+        <span>₹220</span>
+      </div>
+    </div>
+    <div class="category-title">Non-Veg Items</div>
+    <div class="menu-item" onclick="toggleItem(this, 'Chicken Biryani', 250)">
+      <img src="https://www.licious.in/blog/wp-content/uploads/2022/06/chicken-hyderabadi-biryani-01.jpg" alt="Chicken Biryani">
+      <div class="menu-item-description">
+        <span>Chicken Biryani</span>
+        <span>₹250</span>
+      </div>
+    </div>
+    <div class="menu-item" onclick="toggleItem(this, 'Mutton Biryani', 400)">
+      <img src="https://www.licious.in/blog/wp-content/uploads/2022/06/mutton-hyderabadi-biryani-01-750x750.jpg" alt="Mutton Biryani">
+      <div class="menu-item-description">
+        <span>Mutton Biryani</span>
+        <span>₹400</span>
+      </div>
+    </div>
+    <div class="menu-item" onclick="toggleItem(this, 'Chicken Lollipop Biryani', 280)">
+      <img src="https://biryanibydeal.in/wp-content/uploads/2024/12/lollypop-3.png" alt="Chicken Lollipop Biryani">
+      <div class="menu-item-description">
+        <span>Chicken Lollipop Biryani</span>
+        <span>₹280</span>
+      </div>
+    </div>
+    <div class="menu-item" onclick="toggleItem(this, 'Chicken Wings Biryani', 250)">
+      <img src="https://b.zmtcdn.com/data/dish_photos/162/9dfd3a32ab95e6948828d52a41be1162.jpeg" alt="Chicken Wings Biryani">
+      <div class="menu-item-description">
+        <span>Chicken Wings Biryani</span>
+        <span>₹250</span>
+      </div>
+    </div>
+    <div class="menu-item" onclick="toggleItem(this, 'Prawns Biryani', 500)">
+      <img src="https://www.kannammacooks.com/wp-content/uploads/prawn-biryani-eral-biriyani-recipe-1.jpg" alt="Prawns Biryani">
+      <div class="menu-item-description">
+        <span>Prawns Biryani</span>
+        <span>₹500</span>
+      </div>
+    </div>
+  </section>
+  <!-- Desserts Section -->
+  <section id="desserts">
+    <h2>Desserts Menu</h2>
+    <div class="category-title">Pastry</div>
+    <div class="menu-item" onclick="toggleItem(this, 'Black Forest', 150)">
+      <img src="https://j6e2i8c9.rocketcdn.me/wp-content/uploads/2021/05/Eggless-Black-forest-Pastry-recipe-1.jpg" alt="Black Forest">
+      <div class="menu-item-description">
+        <span>Black Forest</span>
+        <span>₹150</span>
+      </div>
+    </div>
+    <div class="menu-item" onclick="toggleItem(this, 'White Forest Pastry', 200)">
+      <img src="https://www.muffinscakes.com/files/catalog/New%20Photoshoot%20Cakes/WhiteForest%20Pastry.JPG" alt="White Forest Pastry">
+      <div class="menu-item-description">
+        <span>White Forest Pastry</span>
+        <span>₹180</span>
+      </div>
+    </div>
+    <div class="menu-item" onclick="toggleItem(this, 'Red Velvet Pastry', 250)">
+      <img src="https://static.toiimg.com/thumb/53538843.cms?imgsize=163418&width=800&height=800" alt="Red Velvet Pastry">
+      <div class="menu-item-description">
+        <span>Red Velvet Pastry</span>
+        <span>₹200</span>
+      </div>
+    </div>
+    <div class="menu-item" onclick="toggleItem(this, 'Blueberry Cheesecake', 250)">
+        <img src="https://theloopywhisk.com/wp-content/uploads/2021/01/Blueberry-Cheesecake_730px-featured.jpg" alt="Blueberry Cheesecake">
+        <div class="menu-item-description">
+          <span>Blueberry Cheesecake</span>
+          <span>₹250</span>
+        </div>
+      </div>
+      <div class="category-title">Ice Creams</div>
+      <div class="menu-item" onclick="toggleItem(this, 'Belgian Chocolate', 170)">
+        <img src="https://i.pinimg.com/736x/60/98/1e/60981e85fcaa0dbfee8d8f1f5e43a46f.jpg" alt="Belgian Chocolate">
+        <div class="menu-item-description">
+          <span>Belgian Chocolate</span>
+          <span>₹170</span>
+        </div>
+      </div>
+      <div class="menu-item" onclick="toggleItem(this, 'Red Velvet Swirl', 200)">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRep3T_TLQWb2_IeGRKcDSmRddxXKyyGA2oUw&s" alt="Red Velvet Swirl">
+        <div class="menu-item-description">
+          <span>Red Velvet Swirl</span>
+          <span>₹270</span>
+        </div>
+      </div>
+      <div class="menu-item" onclick="toggleItem(this, 'Black Currant ', 200)">
+        <img src="https://cpimg.tistatic.com/06922566/b/4/Black-Currant-Flavour.jpg" alt="Black Currant ">
+        <div class="menu-item-description">
+          <span>Black Currant </span>
+          <span>₹250</span>
+        </div>
+      </div>
+      <div class="menu-item" onclick="toggleItem(this, 'Mint Choco Chip', 200)">
+        <img src="https://feelslikehomeblog.com/wp-content/uploads/2022/02/Mint-Chocolate-Chip-Ice-Cream-recipe-FB.png" alt="Mint Choco Chip">
+        <div class="menu-item-description">
+          <span>Mint Choco Chip</span>
+          <span>₹150</span>
+        </div>
+      </div>
+      <div class="menu-item" onclick="toggleItem(this, 'Nutty Caramel Sundae', 200)">
+        <img src="https://img.freepik.com/premium-photo/pecan-caramel-ice-cream-sundae-with-dripping-caramel-sauce-indulgent-nutty-dessert_167857-90739.jpg?w=360" alt="Nutty Caramel Sundae">
+        <div class="menu-item-description">
+          <span>Nutty Caramel Sundae</span>
+          <span>₹270</span>
+        </div>
+      </div>
+  </section>
+
+  <!-- Drinks Section -->
+  <section id="drinks">
+    <h2>Drinks Menu</h2>
+    <div class="category-title">Mojito</div>
+    <div class="menu-item" onclick="toggleItem(this, 'Blueberry mojito', 190)">
+      <img src="https://www.acouplecooks.com/wp-content/uploads/2021/08/Blueberry-Mojito-003.jpg" alt="Blueberry mojito">
+      <div class="menu-item-description">
+        <span>Blueberry mojito</span>
+        <span>₹190</span>
+      </div>
+    </div>
+    <div class="menu-item" onclick="toggleItem(this, 'Strawberry Mojito', 180)">
+      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSYQmbt5-uV4btDfT8ky2oFuFdwjm0zYLFx0A&s" alt="Strawberry Mojito">
+      <div class="menu-item-description">
+        <span>Strawberry Mojito</span>
+        <span>₹180</span>
+      </div>
+    </div>
+    <div class="menu-item" onclick="toggleItem(this, 'Watermelon mojito', 120)">
+      <img src="https://s3-ap-south-1.amazonaws.com/betterbutterbucket-silver/sanchari-karmakar20180527191805322.jpeg" alt="Watermelon mojito">
+      <div class="menu-item-description">
+        <span>Watermelon mojito</span>
+        <span>₹120</span>
+      </div>
+    </div>
+    <div class="menu-item" onclick="toggleItem(this, 'Vodka Mojito', 120)">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQxvG0aQHa1ZFkQiAQ9Lq09s6m5ojtk3MdPjw&s" alt="Vodka Mojito">
+        <div class="menu-item-description">
+          <span>Vodka Mojito</span>
+          <span>₹120</span>
+        </div>
+      </div>
+      <div class="menu-item" onclick="toggleItem(this, 'Champagne Mojito', 120)">
+        <img src="https://www.livcheers.com/static/content/images/cocktails/champagne-mojito.webp" alt="Champagne Mojito">
+        <div class="menu-item-description">
+          <span>Champagne Mojito</span>
+          <span>₹150</span>
+        </div>
+      </div>
+      <div class="category-title">Milkshakes</div>
+      <div class="menu-item" onclick="toggleItem(this, 'Vanilla special', 180)">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSxeu8g3vN498-f-nz3YRWMeiXACHmqbjI2mg&s" alt="Vanilla special">
+        <div class="menu-item-description">
+          <span>Vanilla special</span>
+          <span>₹180</span>
+        </div>
+      </div>
+      <div class="menu-item" onclick="toggleItem(this, 'Strawberry marshallow', 200)">
+        <img src="https://cdn.shopify.com/s/files/1/1654/9543/files/Millennial_Pink_Strawberry_Marshmallow_Milkshake_-_XO_Marshmallow_Blog_Post_1_1024x1024.jpg?v=1643825012" alt="Strawberry marshallow">
+        <div class="menu-item-description">
+          <span>Strawberry marshallow</span>
+          <span>₹200</span>
+        </div>
+      </div>
+      <div class="menu-item" onclick="toggleItem(this, 'Chocolate Bliss', 180)">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSQzHLGA-Hp3YejYfdWFfgT8HrdTVTZLDhVGw&s" alt="Chocolate Bliss">
+        <div class="menu-item-description">
+          <span>Chocolate Bliss</span>
+          <span>₹180</span>
+        </div>
+      </div>
+      <div class="menu-item" onclick="toggleItem(this, 'Oreo Fantasy', 200)">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSCDaAx9WVZzlzXHNdLs2bSfutT1iasod-pjA&s" alt="Oreo Fantasy">
+        <div class="menu-item-description">
+          <span>Oreo Fantasy</span>
+          <span>₹200</span>
+        </div>
+      </div>
+      <div class="category-title">Thichshakes</div>
+      <div class="menu-item" onclick="toggleItem(this, 'Chocolate Overload', 180)">
+        <img src="https://begoodorganics.com/wp-content/uploads/2022/01/SALTED-CHOCOLATE-THICKSHAKE-SQUARE-scaled.jpg" alt="Chocolate Overload">
+        <div class="menu-item-description">
+          <span>Chocolate Overload</span>
+          <span>₹180</span>
+        </div>
+      </div>
+      <div class="menu-item" onclick="toggleItem(this, 'Oreo Blast ', 200)">
+        <img src="https://cdn.grofers.com/assets/search/usecase/banner/oreo_thick_shake_01.png" alt="Oreo Blast ">
+        <div class="menu-item-description">
+          <span>Oreo Blast </span>
+          <span>₹200</span>
+        </div>
+      </div>
+      <div class="menu-item" onclick="toggleItem(this, 'KitKat Crunch ', 220)">
+        <img src="https://www.habibbakery.ae/cdn/shop/files/536A.png?v=1726324412" alt="KitKat Crunch ">
+        <div class="menu-item-description">
+          <span>KitKat Crunch </span>
+          <span>₹220</span>
+        </div>
+      </div>
+      <div class="menu-item" onclick="toggleItem(this, 'Coffee Caramel  ', 220)">
+        <img src="https://i.pinimg.com/originals/ff/5f/13/ff5f13a43fa79fc9e7c9c82d8c91e30a.jpg" alt="Coffee Caramel  ">
+        <div class="menu-item-description">
+          <span>Coffee Caramel </span>
+          <span>₹220</span>
+        </div>
+      </div>
+      <div class="menu-item" onclick="toggleItem(this, 'Strawberry Supreme', 170)">
+        <img src="https://www.cafechococraze.com/wp-content/uploads/2016/06/strawberry-Thick-shake.jpg" alt="Strawberry Supreme ">
+        <div class="menu-item-description">
+          <span>Strawberry Supreme</span>
+          <span>₹170</span>
+        </div>
+      </div>
+  </section>
+
+  <!-- Order Summary at the Bottom -->
+  <div class="billing-list" id="billingList">
+    <h3>Order Summary</h3>
+    <div id="billingItems"></div>
+    <div class="total-amount" id="totalAmount">Total: ₹0</div>
+    <button class="place-order-btn" onclick="placeOrder()">Place Order</button>
+  </div>
+  <div id="order-message"></div>
+
+  <!-- Back-to-Top Button with Up Arrow -->
+  <button id="backToTop" onclick="scrollToTop()">&#8679;</button>
+
+  <footer>
+    <p>&copy; 2025 HOTEL PARADISE. All Rights Reserved.</p>
+  </footer>
+  <script>
+    let order = [];
+    function toggleItem(element, name, price) {
+      // Toggle the selected state for this item independently
+      if (element.classList.contains('selected')) {
+        element.classList.remove('selected');
+        // Remove the item from the order list
+        order = order.filter(item => item.name !== name);
+      } else {
+        element.classList.add('selected');
+        order.push({ name, price, category: getCategory(element) });
+      }
+      updateBilling();
+    }
+    function updateBilling() {
+      const billingItems = document.getElementById('billingItems');
+      const totalAmount = document.getElementById('totalAmount');
+      billingItems.innerHTML = '';
+      let total = 0;
+      order.forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'billing-item';
+        div.innerHTML = `<span>${item.name}</span><span>₹${item.price}</span>`;
+        billingItems.appendChild(div);
+        total += item.price;
+      });
+      totalAmount.textContent = `Total: ₹${total}`;
+    }
+    function placeOrder() {
+      if (order.length === 0) {
+        document.getElementById('order-message').textContent = 'No items selected!';
+        return;
+      }
+      document.getElementById('order-message').textContent = 'Order placed successfully!';
+      // Reset the order and clear all selected states
+      order = [];
+      updateBilling();
+      document.querySelectorAll('.menu-item.selected').forEach(item => item.classList.remove('selected'));
+    }
+    function getCategory(element) {
+      // Get the category title associated with the item
+      let sibling = element.previousElementSibling;
+      while (sibling) {
+        if (sibling.classList && sibling.classList.contains('category-title')) {
+          return sibling.textContent.trim();
+        }
+        sibling = sibling.previousElementSibling;
+      }
+      // If not found, use the section's header text
+      const sectionTitle = element.closest('section').querySelector('h2');
+      return sectionTitle ? sectionTitle.textContent.trim() : 'Default';
+    }
+    // Back-to-Top functionality
+    window.onscroll = function() { toggleBackToTop(); };
+    function toggleBackToTop() {
+      const btn = document.getElementById('backToTop');
+      if (document.body.scrollTop > 100 || document.documentElement.scrollTop > 100) {
+        btn.style.display = "block";
+      } else {
+        btn.style.display = "none";
+      }
+    }
+    function scrollToTop() {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  </script>
+</body>
+</html>
